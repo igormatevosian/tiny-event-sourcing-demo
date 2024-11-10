@@ -54,7 +54,12 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
 
     @StateTransitionFunc
     fun taskCreatedApply(event: TaskCreatedEvent) {
-        tasks[event.taskId] = TaskEntity(id = event.taskId, name = event.taskName, project = event.projectId, taskStatuses = mutableSetOf())
+        tasks[event.taskId] = TaskEntity(
+            id = event.taskId,
+            name = event.taskName,
+            project = event.projectId,
+            taskStatuses = mutableSetOf()
+        )
         updatedAt = createdAt
     }
 
@@ -71,13 +76,6 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
     }
 }
 
-data class UserEntity(
-    val id: UUID,
-    val nickname: String,
-    val name: String,
-    val password: String,
-    val projects: MutableSet<UUID>
-)
 
 data class TaskEntity(
     val id: UUID = UUID.randomUUID(),
