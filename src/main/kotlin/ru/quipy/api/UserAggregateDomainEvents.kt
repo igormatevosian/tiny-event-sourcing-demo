@@ -14,7 +14,7 @@ class UserCreatedEvent(
     val username: String,
     val password: String,
     createdAt: Long = System.currentTimeMillis(),
-) : Event<ProjectAggregate>(
+) : Event<UserAggregate>(
     name = PROJECT_CREATED_EVENT,
     createdAt = createdAt,
 )

@@ -14,7 +14,7 @@ const val TASK_STATUS_CHANGED_EVENT = "TASK_STATUS_CHANGED_EVENT"
 // API
 @DomainEvent(name = ASSIGNEE_ADDED_TO_TASK_EVENT)
 class AssigneeAddedToTaskEvent(
-    val nickname: String,
+    val userId: UUID,
     val taskId: UUID,
     createdAt: Long = System.currentTimeMillis()
 ) : Event<TaskAggregate>(

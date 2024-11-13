@@ -58,7 +58,7 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
             id = event.taskId,
             name = event.taskName,
             project = event.projectId,
-            taskStatuses = mutableSetOf()
+            users = mutableListOf<UUID>()
         )
         updatedAt = createdAt
     }
@@ -84,7 +84,7 @@ data class TaskEntity(
     val isOpened: Boolean = true,
     val project: UUID,
     val status: UUID? = null,
-    val taskStatuses: MutableSet<UUID>
+    val users: MutableList<UUID>
 )
 
 data class TaskStatusEntity(
