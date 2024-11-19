@@ -1,9 +1,6 @@
 package ru.quipy.logic
 
-import ru.quipy.api.ProjectCreatedEvent
-import ru.quipy.api.TagAssignedToTaskEvent
-import ru.quipy.api.TagCreatedEvent
-import ru.quipy.api.TaskCreatedEvent
+import ru.quipy.api.*
 import java.util.*
 
 
@@ -18,25 +15,46 @@ fun ProjectAggregateState.create(id: UUID, title: String, creatorId: String): Pr
     )
 }
 
+fun ProjectAggregateState.addUser(userId: UUID): UserAddedToProjectEvent {
+    return UserAddedToProjectEvent(userId = userId, projectId = this.getId())
+}
+
 fun ProjectAggregateState.addTask(name: String): TaskCreatedEvent {
     return TaskCreatedEvent(projectId = this.getId(), taskId = UUID.randomUUID(), taskName = name)
 }
 
-fun ProjectAggregateState.createTag(name: String): TagCreatedEvent {
-    if (projectTags.values.any { it.name == name }) {
-        throw IllegalArgumentException("Tag already exists: $name")
-    }
-    return TagCreatedEvent(projectId = this.getId(), tagId = UUID.randomUUID(), tagName = name)
+fun ProjectAggregateState.rename(newName: String): ProjectRenamedEvent {
+    return ProjectRenamedEvent(projectId = this.getId(), newName = newName)
 }
 
-fun ProjectAggregateState.assignTagToTask(tagId: UUID, taskId: UUID): TagAssignedToTaskEvent {
-    if (!projectTags.containsKey(tagId)) {
-        throw IllegalArgumentException("Tag doesn't exists: $tagId")
-    }
-
-    if (!tasks.containsKey(taskId)) {
-        throw IllegalArgumentException("Task doesn't exists: $taskId")
-    }
-
-    return TagAssignedToTaskEvent(projectId = this.getId(), tagId = tagId, taskId = taskId)
+fun ProjectAggregateState.removeUser(userId: UUID): UserRemovedFromProjectEvent {
+    return UserRemovedFromProjectEvent(userId = userId)
 }
+
+fun ProjectAggregateState.createTaskStatus(name: String, color: String, columnNumber: Int): TaskStatusCreatedEvent {
+    if (taskStatuses.values.any { it.name == name }) {
+        throw IllegalArgumentException("Task status already exists: $name")
+    }
+    return TaskStatusCreatedEvent(
+        projectId = this.getId(),
+        statusId = UUID.randomUUID(),
+        statusName = name,
+        color = color,
+        columnNumber = columnNumber
+    )
+}
+
+fun ProjectAggregateState.deleteTaskStatus(statusId: UUID): TaskStatusDeletedEvent {
+    return TaskStatusDeletedEvent(statusId = statusId)
+}
+
+fun ProjectAggregateState.changeTaskStatusColumnNumber(
+    taskStatusId: UUID,
+    newColumnNumber: Int
+): TaskStatusColumnNumberChangedEvent {
+    if (taskStatuses.values.any { it.number == newColumnNumber }) {
+        throw IllegalArgumentException("Task status with this column number already exists: $newColumnNumber")
+    }
+    return TaskStatusColumnNumberChangedEvent(statusId = taskStatusId, newColumnNumber = newColumnNumber)
+}
+
