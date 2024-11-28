@@ -4,13 +4,16 @@ import org.springframework.web.bind.annotation.*
 import ru.quipy.api.*
 import ru.quipy.core.EventSourcingService
 import ru.quipy.logic.*
+import ru.quipy.services.ServiceSingleton
 import java.util.*
 
 @RestController
 @RequestMapping("/tasks")
 class TaskController(
-    val taskEsService: EventSourcingService<UUID, TaskAggregate, TaskAggregateState>
-) {
+    val taskEsService: EventSourcingService<UUID, TaskAggregate, TaskAggregateState>,
+    val service: ServiceSingleton,
+
+    ) {
     @PutMapping("/{taskID}/tasks/{taskNewName}")
     fun renameTask(@PathVariable taskID: UUID, @PathVariable taskNewName: String) : TaskRenamedEvent {
         return taskEsService.update(taskID) {
